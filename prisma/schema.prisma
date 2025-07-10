@@ -1,0 +1,136 @@
+// 📁 파일: prisma/schema.prisma
+// Prisma 스키마 정의 - SQLite 버전
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 사용자 모델
+model User {
+  id            String          @id @default(cuid())
+  discordId     String          @unique
+  username      String
+  discriminator String?
+  avatar        String?
+  email         String?
+  permissions   String          @default("[]") // SQLite는 배열을 지원하지 않으므로 JSON 문자열로 저장
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  // 관계
+  parties       Party[]         @relation("PartyCreator")
+  partyMembers  PartyMember[]
+  commandLogs   CommandLog[]
+  apiLogs       APILog[]
+  
+  @@index([discordId])
+}
+
+// 길드 모델
+model Guild {
+  id              String          @id @default(cuid())
+  guildId         String          @unique
+  name            String
+  icon            String?
+  memberCount     Int             @default(0)
+  ownerId         String
+  joinedAt        DateTime
+  features        String          @default("[]") // JSON 문자열로 저장
+  preferredLocale String?
+  settings        String          @default("{}") // JSON 문자열로 저장
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // 관계
+  parties         Party[]
+  commandLogs     CommandLog[]
+  
+  @@index([guildId])
+}
+
+// 파티 모델 (게임 파티)
+model Party {
+  id          String          @id @default(cuid())
+  guildId     String
+  guild       Guild           @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
+  creatorId   String
+  creator     User            @relation("PartyCreator", fields: [creatorId], references: [id])
+  
+  title       String
+  game        String
+  description String?
+  maxMembers  Int             @default(4)
+  startTime   DateTime
+  endTime     DateTime?
+  status      String          @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  
+  channelId   String?
+  messageId   String?
+  voiceChannelId String?
+  
+  metadata    String          @default("{}") // JSON 문자열로 저장
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  
+  // 관계
+  members     PartyMember[]
+  
+  @@index([guildId, status])
+  @@index([creatorId])
+  @@index([startTime])
+}
+
+// 파티 멤버 모델
+model PartyMember {
+  partyId   String
+  party     Party     @relation(fields: [partyId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  
+  role      String    @default("MEMBER") // LEADER, MEMBER
+  joinedAt  DateTime  @default(now())
+  
+  @@id([partyId, userId])
+  @@index([userId])
+}
+
+// 명령어 로그 모델
+model CommandLog {
+  id           String    @id @default(cuid())
+  command      String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  guildId      String?
+  guild        Guild?    @relation(fields: [guildId], references: [guildId])
+  channelId    String?
+  success      Boolean   @default(true)
+  errorMessage String?
+  executedAt   DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([guildId])
+  @@index([executedAt])
+}
+
+// API 로그 모델
+model APILog {
+  id         String    @id @default(cuid())
+  method     String
+  path       String
+  statusCode Int
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  duration   Int       // milliseconds
+  ip         String?
+  userAgent  String?
+  timestamp  DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([timestamp])
+  @@index([statusCode])
+}
