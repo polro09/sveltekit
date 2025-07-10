@@ -1,40 +1,42 @@
 {
-    "extends": "./.svelte-kit/tsconfig.json",
-    "compilerOptions": {
-        "allowJs": true,
-        "checkJs": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "sourceMap": true,
-        "strict": true,
-        "moduleResolution": "bundler",
-        "module": "esnext",
-        "noEmit": true,
-        "target": "es2020",
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/*"],
-            "@lib": ["./src/lib"],
-            "@lib/*": ["./src/lib/*"],
-            "@components/*": ["./src/lib/components/*"],
-            "@stores/*": ["./src/lib/stores/*"],
-            "@utils/*": ["./src/lib/utils/*"],
-            "$lib": ["./src/lib"],
-            "$lib/*": ["./src/lib/*"]
-        }
-    },
-    "include": [
-        "src/**/*.d.ts",
-        "src/**/*.ts",
-        "src/**/*.js",
-        "src/**/*.svelte",
-        "vite.config.js"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        ".svelte-kit"
-    ]
+  "extends": "./.svelte-kit/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "types": ["vite/client"],
+    "isolatedModules": true,
+    "moduleDetection": "force"
+  },
+  "include": [
+    ".svelte-kit/ambient.d.ts",
+    ".svelte-kit/types/**/$types.d.ts",
+    "vite.config.js",
+    "vite.config.ts",
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.svelte",
+    "tests/**/*.js",
+    "tests/**/*.ts",
+    "tests/**/*.svelte",
+    "*.js",
+    "*.ts",
+    "*.svelte"
+  ],
+  "exclude": ["node_modules", "build", ".svelte-kit", "dist"]
 }

@@ -1,0 +1,18 @@
+{
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "svelte"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "svelte.enable-ts-plugin": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}
